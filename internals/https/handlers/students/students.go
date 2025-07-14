@@ -7,6 +7,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/3shaan/students-api/internals/storage"
 	"github.com/3shaan/students-api/internals/types"
@@ -55,6 +56,25 @@ func GetAll(storage storage.Storage) http.HandlerFunc {
 		result, err := storage.GetStudents()
 		if err != nil {
 			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+			return
+		}
+		response.WriteJson(w, http.StatusOK, result)
+
+	}
+}
+
+func GetStudentById(storage storage.Storage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		intId, err := strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			response.WriteJson(w, http.StatusOK, response.GeneralError(err))
+			return
+		}
+		result, err := storage.GetStudentById(intId)
+		if err != nil {
+			response.WriteJson(w, http.StatusOK, response.GeneralError(err))
+			return
 		}
 		response.WriteJson(w, http.StatusOK, result)
 

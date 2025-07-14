@@ -2,6 +2,7 @@ package sqlite
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/3shaan/students-api/internals/config"
 	"github.com/3shaan/students-api/internals/types"
@@ -76,5 +77,27 @@ func (s *Sqlite) GetStudents() ([]types.Student, error) {
 
 	}
 	return students, nil
+
+}
+
+func (s *Sqlite) GetStudentById(id int64) (types.Student, error) {
+	stmt, err := s.Db.Prepare("SELECT id, name, email, age FROM students where id=? LIMIT 1")
+	if err != nil {
+		return types.Student{}, err
+	}
+
+	defer stmt.Close()
+	var student types.Student
+
+	err = stmt.QueryRow(id).Scan(&student.ID, &student.Name, &student.Email, &student.Age)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return types.Student{}, fmt.Errorf("no student found with this %s", fmt.Sprint(id))
+
+		}
+		return types.Student{}, fmt.Errorf("query error %w", err)
+	}
+
+	return student, nil
 
 }
