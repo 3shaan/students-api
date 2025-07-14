@@ -21,7 +21,7 @@ func main() {
 	cfg := config.MustLoad()
 
 	// database config
-	_, databaseInitErr := sqlite.New(cfg)
+	storage, databaseInitErr := sqlite.New(cfg)
 	if databaseInitErr != nil {
 		log.Panic("Database initialzed failed", databaseInitErr.Error())
 	}
@@ -30,7 +30,8 @@ func main() {
 
 	//setup router
 	router := http.NewServeMux()
-	router.HandleFunc("POST /api/students", students.New())
+	router.HandleFunc("POST /api/students", students.New(storage))
+	router.HandleFunc("GET /api/students", students.GetAll(storage))
 
 	// setup server
 	server := http.Server{

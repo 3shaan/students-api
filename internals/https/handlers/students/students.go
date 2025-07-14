@@ -5,14 +5,16 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 
+	"github.com/3shaan/students-api/internals/storage"
 	"github.com/3shaan/students-api/internals/types"
 	"github.com/3shaan/students-api/internals/utils/response"
 	"github.com/go-playground/validator/v10"
 )
 
-func New() http.HandlerFunc {
+func New(storage storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var student types.Student
 
@@ -36,7 +38,21 @@ func New() http.HandlerFunc {
 			return
 		}
 
-		response.WriteJson(w, http.StatusCreated, map[string]string{"Success": "OK"})
+		// insert into database
+		lastId, err := storage.CreateStudent(student.Name, student.Email, student.Age)
+		if err != nil {
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+		}
+		slog.Info("User created with id %s", slog.String("user id", fmt.Sprint(lastId)))
+
+		response.WriteJson(w, http.StatusCreated, map[string]int64{"userId": (lastId)})
 	}
 
+}
+
+func GetAll(storage storage.Storage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		response.WriteJson(w, http.StatusOK, "working")
+
+	}
 }
