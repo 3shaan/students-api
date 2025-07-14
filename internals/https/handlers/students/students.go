@@ -80,3 +80,25 @@ func GetStudentById(storage storage.Storage) http.HandlerFunc {
 
 	}
 }
+
+func DeleteStudentById(storage storage.Storage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		intId, err := strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			response.WriteJson(w, http.StatusOK, response.GeneralError(err))
+			return
+		}
+		result, err := storage.DeleteStudentById(intId)
+		if err != nil {
+			response.WriteJson(w, http.StatusOK, response.GeneralError(err))
+			return
+		}
+		if result != "OK" {
+			response.WriteJson(w, http.StatusOK, response.GeneralError(fmt.Errorf("unexpred error occure")))
+			return
+		}
+		response.WriteJson(w, http.StatusOK, result)
+
+	}
+}
