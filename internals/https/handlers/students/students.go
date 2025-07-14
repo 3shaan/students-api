@@ -52,7 +52,11 @@ func New(storage storage.Storage) http.HandlerFunc {
 
 func GetAll(storage storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		response.WriteJson(w, http.StatusOK, "working")
+		result, err := storage.GetStudents()
+		if err != nil {
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+		}
+		response.WriteJson(w, http.StatusOK, result)
 
 	}
 }

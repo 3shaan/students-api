@@ -57,7 +57,7 @@ func (s *Sqlite) CreateStudent(name string, email string, age int) (int64, error
 
 func (s *Sqlite) GetStudents() ([]types.Student, error) {
 
-	rows, err := s.Db.Query(`Select * from students`)
+	rows, err := s.Db.Query(`Select id, name, email, age FROM students`)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (s *Sqlite) GetStudents() ([]types.Student, error) {
 
 	for rows.Next() {
 		var student types.Student
-		err := rows.Scan()
+		err := rows.Scan(&student.ID, &student.Name, &student.Email, &student.Age)
 		if err != nil {
 			return nil, err
 		}
