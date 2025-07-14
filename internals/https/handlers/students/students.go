@@ -46,7 +46,7 @@ func New(storage storage.Storage) http.HandlerFunc {
 		}
 		slog.Info("User created with id %s", slog.String("user id", fmt.Sprint(lastId)))
 
-		response.WriteJson(w, http.StatusCreated, map[string]int64{"userId": (lastId)})
+		response.WriteJson(w, http.StatusCreated, response.SuccessRes(map[string]int{"id": int(lastId)}))
 	}
 
 }
@@ -58,7 +58,7 @@ func GetAll(storage storage.Storage) http.HandlerFunc {
 			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
 			return
 		}
-		response.WriteJson(w, http.StatusOK, result)
+		response.WriteJson(w, http.StatusOK, response.SuccessRes(result))
 
 	}
 }
@@ -76,7 +76,7 @@ func GetStudentById(storage storage.Storage) http.HandlerFunc {
 			response.WriteJson(w, http.StatusOK, response.GeneralError(err))
 			return
 		}
-		response.WriteJson(w, http.StatusOK, result)
+		response.WriteJson(w, http.StatusOK, response.SuccessRes(result))
 
 	}
 }
@@ -98,7 +98,7 @@ func DeleteStudentById(storage storage.Storage) http.HandlerFunc {
 			response.WriteJson(w, http.StatusOK, response.GeneralError(fmt.Errorf("unexpred error occure")))
 			return
 		}
-		response.WriteJson(w, http.StatusOK, result)
+		response.WriteJson(w, http.StatusOK, response.SuccessRes(result))
 
 	}
 }

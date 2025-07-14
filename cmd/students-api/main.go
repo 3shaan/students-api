@@ -14,7 +14,7 @@ import (
 
 	"github.com/3shaan/students-api/internals/config"
 	"github.com/3shaan/students-api/internals/https/handlers/students"
-	"github.com/3shaan/students-api/internals/storage/sqlite"
+	mySql "github.com/3shaan/students-api/internals/storage/mysql"
 )
 
 func main() {
@@ -24,9 +24,13 @@ func main() {
 	cfg := config.MustLoad()
 
 	// database config
-	storage, databaseInitErr := sqlite.New(cfg)
-	if databaseInitErr != nil {
-		log.Panic("Database initialzed failed", databaseInitErr.Error())
+	// storage, databaseInitErr := sqlite.New(cfg)
+	// if databaseInitErr != nil {
+	// 	log.Panic("Database initialzed failed", databaseInitErr.Error())
+	// }
+	storage, err := mySql.New(cfg)
+	if err != nil {
+		log.Panic("Mysql database initialize failed", err.Error())
 	}
 
 	slog.Info("Database Initialize success")
