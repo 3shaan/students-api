@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
@@ -17,6 +18,8 @@ import (
 )
 
 func main() {
+	// set the env
+	os.Setenv("CONFIG_PATH", "config/local.yaml") // change to producton.yaml in production
 	//load config
 	cfg := config.MustLoad()
 
@@ -30,6 +33,13 @@ func main() {
 
 	//setup router
 	router := http.NewServeMux()
+
+	// index file
+	currentDir, _ := os.Getwd()
+	indexPath := filepath.Join(currentDir, "internals", "statics")
+	fmt.Println("in", indexPath)
+	router.Handle("GET /", http.FileServer(http.Dir(indexPath)))
+
 	router.HandleFunc("POST /api/students", students.New(storage))
 	router.HandleFunc("GET /api/students", students.GetAll(storage))
 	router.HandleFunc("GET /api/students/{id}", students.GetStudentById(storage))

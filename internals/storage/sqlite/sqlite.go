@@ -103,6 +103,7 @@ func (s *Sqlite) GetStudentById(id int64) (types.Student, error) {
 }
 
 // delete functions
+// if deleted it will "OK"
 func (s Sqlite) DeleteStudentById(id int64) (string, error) {
 	result, err := s.Db.Exec("DELETE FROM students WHERE id=?", id)
 	if err != nil {
