@@ -13,11 +13,20 @@ import (
 
 	"github.com/3shaan/students-api/internals/config"
 	"github.com/3shaan/students-api/internals/https/handlers/students"
+	"github.com/3shaan/students-api/internals/storage/sqlite"
 )
 
 func main() {
 	//load config
 	cfg := config.MustLoad()
+
+	// database config
+	_, databaseInitErr := sqlite.New(cfg)
+	if databaseInitErr != nil {
+		log.Panic("Database initialzed failed", databaseInitErr.Error())
+	}
+
+	slog.Info("Database Initialize success")
 
 	//setup router
 	router := http.NewServeMux()
